@@ -62,3 +62,11 @@ target_link_libraries(IvanSound
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
 )
+
+# Sign the VST3 after build (ad-hoc if no identity specified)
+set(CODESIGN_IDENTITY "-" CACHE STRING "Code signing identity (use '-' for ad-hoc)")
+add_custom_command(TARGET IvanSound_VST3 POST_BUILD
+    COMMAND codesign --force --sign "${CODESIGN_IDENTITY}" --deep --strict
+            "$<TARGET_BUNDLE_DIR:IvanSound_VST3>"
+    COMMENT "Signing IvanSound.vst3 with identity: ${CODESIGN_IDENTITY}"
+)
