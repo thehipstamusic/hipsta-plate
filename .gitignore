@@ -1,4 +1,6 @@
 build/
+release/
 .DS_Store
 *.o
 *.a
+.claude/

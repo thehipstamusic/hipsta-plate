@@ -66,8 +66,7 @@ void IvanSoundProcessor::releaseResources() {}
 
 bool IvanSoundProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-        && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
@@ -91,30 +90,10 @@ void IvanSoundProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
     reverb.setParameters(decayVal, sizeVal, dampingVal, predelayMs, widthVal,
                          static_cast<DSP::PlateMode>(modeVal));
 
-    const int numSamples = buffer.getNumSamples();
-    const int numChannels = buffer.getNumChannels();
-
-    // Ensure stereo
-    const auto* inL = buffer.getReadPointer(0);
-    const auto* inR = numChannels > 1 ? buffer.getReadPointer(1) : buffer.getReadPointer(0);
-
-    // Temp buffers for wet signal
-    std::vector<float> wetL(static_cast<size_t>(numSamples));
-    std::vector<float> wetR(static_cast<size_t>(numSamples));
-
-    reverb.process(inL, inR, wetL.data(), wetR.data(), numSamples);
-
-    // Mix dry/wet
-    auto* outL = buffer.getWritePointer(0);
-    for (int i = 0; i < numSamples; ++i)
-        outL[i] = (inL[i] * (1.0f - mixPct)) + (wetL[static_cast<size_t>(i)] * mixPct);
-
-    if (numChannels > 1)
-    {
-        auto* outR = buffer.getWritePointer(1);
-        for (int i = 0; i < numSamples; ++i)
-            outR[i] = (inR[i] * (1.0f - mixPct)) + (wetR[static_cast<size_t>(i)] * mixPct);
-    }
+    reverb.process(buffer.getWritePointer(0),
+                   buffer.getWritePointer(1),
+                   buffer.getNumSamples(),
+                   mixPct);
 }
 
 void IvanSoundProcessor::getStateInformation(juce::MemoryBlock& destData)

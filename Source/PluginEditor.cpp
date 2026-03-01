@@ -1,10 +1,11 @@
 #include "PluginEditor.h"
 
-static const juce::Colour kBackground   (0xFF1A1A2E);
-static const juce::Colour kAccent       (0xFF00C896);
-static const juce::Colour kAccentDim    (0xFF008866);
-static const juce::Colour kTextLight    (0xFFE0E0E0);
-static const juce::Colour kDivider      (0xFF333355);
+static const juce::Colour kBackground (0xFF1A1A2E);
+static const juce::Colour kPanel      (0xFF16213E);
+static const juce::Colour kAccent     (0xFF00C896);
+static const juce::Colour kAccentDim  (0xFF008866);
+static const juce::Colour kTextLight  (0xFFE0E0E0);
+static const juce::Colour kDivider    (0xFF333355);
 
 static void setupKnob(juce::Slider& slider, juce::Label& label, const juce::String& text,
                        juce::AudioProcessorValueTreeState& apvts, const juce::String& paramId,
@@ -23,7 +24,7 @@ static void setupKnob(juce::Slider& slider, juce::Label& label, const juce::Stri
     label.setText(text, juce::dontSendNotification);
     label.setJustificationType(juce::Justification::centred);
     label.setColour(juce::Label::textColourId, kTextLight);
-    label.setFont(juce::FontOptions(13.0f));
+    label.setFont(juce::FontOptions(12.0f));
     parent->addAndMakeVisible(label);
 
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);
@@ -32,16 +33,15 @@ static void setupKnob(juce::Slider& slider, juce::Label& label, const juce::Stri
 IvanSoundEditor::IvanSoundEditor(IvanSoundProcessor& p)
     : AudioProcessorEditor(&p), pluginProcessor(p)
 {
-    setupKnob(mixSlider, mixLabel, "MIX", pluginProcessor.apvts, "mix", mixAttach, this);
-    setupKnob(decaySlider, decayLabel, "DECAY", pluginProcessor.apvts, "decay", decayAttach, this);
-    setupKnob(sizeSlider, sizeLabel, "SIZE", pluginProcessor.apvts, "size", sizeAttach, this);
-    setupKnob(dampingSlider, dampingLabel, "DAMPING", pluginProcessor.apvts, "damping", dampingAttach, this);
+    setupKnob(decaySlider,    decayLabel,    "DECAY",     pluginProcessor.apvts, "decay",    decayAttach,    this);
+    setupKnob(sizeSlider,     sizeLabel,     "SIZE",      pluginProcessor.apvts, "size",     sizeAttach,     this);
+    setupKnob(dampingSlider,  dampingLabel,  "DAMPING",   pluginProcessor.apvts, "damping",  dampingAttach,  this);
     setupKnob(predelaySlider, predelayLabel, "PRE-DELAY", pluginProcessor.apvts, "predelay", predelayAttach, this);
-    setupKnob(widthSlider, widthLabel, "WIDTH", pluginProcessor.apvts, "width", widthAttach, this);
+    setupKnob(widthSlider,    widthLabel,    "WIDTH",     pluginProcessor.apvts, "width",    widthAttach,    this);
+    setupKnob(mixSlider,      mixLabel,      "MIX",       pluginProcessor.apvts, "mix",      mixAttach,      this);
 
-    // Mode dropdown
     modeBox.addItemList(juce::StringArray("Clean", "Bright", "Dark", "Lush", "Dense"), 1);
-    modeBox.setColour(juce::ComboBox::backgroundColourId, kDivider);
+    modeBox.setColour(juce::ComboBox::backgroundColourId, kPanel);
     modeBox.setColour(juce::ComboBox::textColourId, kTextLight);
     modeBox.setColour(juce::ComboBox::outlineColourId, kAccentDim);
     modeBox.setColour(juce::ComboBox::arrowColourId, kAccent);
@@ -50,12 +50,13 @@ IvanSoundEditor::IvanSoundEditor(IvanSoundProcessor& p)
     modeLabel.setText("MODE", juce::dontSendNotification);
     modeLabel.setJustificationType(juce::Justification::centred);
     modeLabel.setColour(juce::Label::textColourId, kTextLight);
-    modeLabel.setFont(juce::FontOptions(13.0f));
+    modeLabel.setFont(juce::FontOptions(12.0f));
     addAndMakeVisible(modeLabel);
 
     modeAttach = std::make_unique<ComboBoxAttachment>(pluginProcessor.apvts, "mode", modeBox);
 
-    setSize(520, 400);
+    setSize(480, 380);
+    setResizable(false, false);
 }
 
 IvanSoundEditor::~IvanSoundEditor() = default;
@@ -64,71 +65,66 @@ void IvanSoundEditor::paint(juce::Graphics& g)
 {
     g.fillAll(kBackground);
 
+    // Header background
+    g.setColour(kPanel);
+    g.fillRect(0, 0, getWidth(), 62);
+
     // Title
     g.setColour(kAccent);
-    g.setFont(juce::FontOptions(26.0f));
-    g.drawFittedText("IVAN SOUND", getLocalBounds().removeFromTop(50), juce::Justification::centred, 1);
+    g.setFont(juce::FontOptions(22.0f));
+    g.drawFittedText("IVAN SOUND", getLocalBounds().removeFromTop(38), juce::Justification::centred, 1);
 
     // Subtitle
     g.setColour(kAccentDim);
-    g.setFont(juce::FontOptions(12.0f));
-    g.drawFittedText("PLATE REVERB", getLocalBounds().removeFromTop(68).removeFromBottom(16), juce::Justification::centred, 1);
+    g.setFont(juce::FontOptions(11.0f));
+    g.drawFittedText("PLATE REVERB", getLocalBounds().removeFromTop(56).removeFromBottom(16), juce::Justification::centred, 1);
 
-    // Divider line
-    g.setColour(kDivider);
-    g.drawLine(30.0f, 72.0f, static_cast<float>(getWidth() - 30), 72.0f, 1.0f);
+    // Divider
+    g.setColour(kAccent.withAlpha(0.3f));
+    g.fillRect(0, 62, getWidth(), 1);
 }
 
 void IvanSoundEditor::resized()
 {
-    auto area = getLocalBounds().reduced(20);
-    area.removeFromTop(75); // title + subtitle
+    auto area = getLocalBounds();
+    area.removeFromTop(66);
 
     // Mode selector row
-    auto modeRow = area.removeFromTop(36);
-    auto modeArea = modeRow.withSizeKeepingCentre(200, 32);
-    modeLabel.setBounds(modeArea.removeFromLeft(50));
-    modeBox.setBounds(modeArea);
+    auto modeRow = area.removeFromTop(34).reduced(100, 0);
+    modeLabel.setBounds(modeRow.removeFromLeft(46));
+    modeBox.setBounds(modeRow.reduced(0, 2));
 
-    area.removeFromTop(10);
+    area.removeFromTop(6);
 
-    // Top row of knobs: Decay, Size, Damping
-    auto topRow = area.removeFromTop(140);
-    int knobW = topRow.getWidth() / 3;
-    {
-        auto col = topRow.removeFromLeft(knobW);
-        decayLabel.setBounds(col.removeFromTop(18));
-        decaySlider.setBounds(col);
-    }
-    {
-        auto col = topRow.removeFromLeft(knobW);
-        sizeLabel.setBounds(col.removeFromTop(18));
-        sizeSlider.setBounds(col);
-    }
+    // Top row: Decay, Size, Damping
+    const int knobH = 130;
+    auto topRow = area.removeFromTop(knobH);
+    const int knobW = topRow.getWidth() / 3;
+
+    auto placeKnob = [&](juce::Slider& slider, juce::Label& label, juce::Rectangle<int>& row) {
+        auto col = row.removeFromLeft(knobW);
+        label.setBounds(col.removeFromTop(16));
+        slider.setBounds(col);
+    };
+
+    placeKnob(decaySlider, decayLabel, topRow);
+    placeKnob(sizeSlider, sizeLabel, topRow);
     {
         auto col = topRow;
-        dampingLabel.setBounds(col.removeFromTop(18));
+        dampingLabel.setBounds(col.removeFromTop(16));
         dampingSlider.setBounds(col);
     }
 
-    area.removeFromTop(5);
+    area.removeFromTop(4);
 
     // Bottom row: Pre-Delay, Width, Mix
-    auto botRow = area;
-    knobW = botRow.getWidth() / 3;
-    {
-        auto col = botRow.removeFromLeft(knobW);
-        predelayLabel.setBounds(col.removeFromTop(18));
-        predelaySlider.setBounds(col);
-    }
-    {
-        auto col = botRow.removeFromLeft(knobW);
-        widthLabel.setBounds(col.removeFromTop(18));
-        widthSlider.setBounds(col);
-    }
+    auto botRow = area.removeFromTop(knobH);
+
+    placeKnob(predelaySlider, predelayLabel, botRow);
+    placeKnob(widthSlider, widthLabel, botRow);
     {
         auto col = botRow;
-        mixLabel.setBounds(col.removeFromTop(18));
+        mixLabel.setBounds(col.removeFromTop(16));
         mixSlider.setBounds(col);
     }
 }

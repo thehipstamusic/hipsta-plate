@@ -14,13 +14,11 @@ public:
 private:
     IvanSoundProcessor& pluginProcessor;
 
-    // Knobs
     juce::Slider mixSlider, decaySlider, sizeSlider;
     juce::Slider dampingSlider, predelaySlider, widthSlider;
     juce::Label mixLabel, decayLabel, sizeLabel;
     juce::Label dampingLabel, predelayLabel, widthLabel;
 
-    // Mode dropdown
     juce::ComboBox modeBox;
     juce::Label modeLabel;
 
