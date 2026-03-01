@@ -41,11 +41,11 @@ public:
         if (readPos < 0.0f)
             readPos += static_cast<float>(buffer.size());
 
-        int idx0 = static_cast<int>(readPos);
-        int idx1 = (idx0 + 1) % static_cast<int>(buffer.size());
-        float frac = readPos - static_cast<float>(idx0);
+        const int idx0 = static_cast<int>(readPos);
+        const int idx1 = (idx0 + 1) % static_cast<int>(buffer.size());
+        const float frac = readPos - static_cast<float>(idx0);
 
-        return buffer[static_cast<size_t>(idx0)] * (1.0f - frac) + buffer[static_cast<size_t>(idx1)] * frac;
+        return (buffer[static_cast<size_t>(idx0)] * (1.0f - frac)) + (buffer[static_cast<size_t>(idx1)] * frac);
     }
 
     float readNearest(int delaySamples) const
@@ -77,9 +77,9 @@ public:
 
     float process(float input, float delaySamples, float coefficient)
     {
-        float delayed = delay.read(delaySamples);
-        float output = -input * coefficient + delayed;
-        delay.push(input + delayed * coefficient);
+        const float delayed = delay.read(delaySamples);
+        const float output = (-input * coefficient) + delayed;
+        delay.push(input + (delayed * coefficient));
         return output;
     }
 
@@ -97,7 +97,7 @@ public:
 
     float process(float input)
     {
-        state = input * (1.0f - g) + state * g;
+        state = (input * (1.0f - g)) + (state * g);
         return state;
     }
 
@@ -121,7 +121,7 @@ public:
 
     float process()
     {
-        float value = std::sin(2.0f * 3.14159265358979f * phase);
+        const float value = std::sin(2.0f * 3.14159265358979f * phase);
         phase += phaseIncrement;
         if (phase >= 1.0f) phase -= 1.0f;
         return value;
@@ -134,7 +134,7 @@ private:
 };
 
 // --- Plate mode presets ---
-enum class PlateMode
+enum class PlateMode : uint8_t
 {
     Clean = 0,
     Bright,
@@ -173,6 +173,7 @@ inline PlatePreset getPreset(PlateMode mode)
             return { 1.05f, 0.760f, 0.640f, 0.710f, 0.510f, 0.001f, 1.0f, 2.5f, 0.9f };
         case PlateMode::Dense:
             return { 0.70f, 0.800f, 0.700f, 0.750f, 0.550f, 0.001f, 1.0f, 0.6f, 1.5f };
+        case PlateMode::NumModes:
         default:
             return { 1.0f, 0.750f, 0.625f, 0.700f, 0.500f, 0.0005f, 1.0f, 1.0f, 1.0f };
     }
@@ -233,7 +234,7 @@ public:
         predelaySamples = static_cast<float>(predelayMs * 0.001 * sr);
         currentPreset = getPreset(mode);
 
-        float dampCoeff = dampingParam * 0.7f + currentPreset.dampingCoeff;
+        float dampCoeff = (dampingParam * 0.7f) + currentPreset.dampingCoeff;
         dampCoeff = std::clamp(dampCoeff, 0.0f, 0.999f);
         for (auto& f : dampingFilter)
             f.setCoefficient(dampCoeff);
@@ -248,34 +249,34 @@ public:
     void process(const float* inputL, const float* inputR,
                  float* outputL, float* outputR, int numSamples)
     {
-        float sc = static_cast<float>(sampleRateScale) * size;
-        PlatePreset& p = currentPreset;
+        const float sc = static_cast<float>(sampleRateScale) * size;
+        const PlatePreset& p = currentPreset;
 
         // Dattorro delay lengths (from paper, reference rate 29761 Hz)
-        float inAP1 = 142.0f * sc;
-        float inAP2 = 107.0f * sc;
-        float inAP3 = 379.0f * sc;
-        float inAP4 = 277.0f * sc;
+        const float inAP1 = 142.0f * sc;
+        const float inAP2 = 107.0f * sc;
+        const float inAP3 = 379.0f * sc;
+        const float inAP4 = 277.0f * sc;
 
-        float tankAP1delay = 672.0f * sc * p.delayScale;
-        float tankDL1delay = 4453.0f * sc * p.delayScale;
-        float tankAP2delay = 1800.0f * sc * p.delayScale;
-        float tankDL2delay = 3720.0f * sc * p.delayScale;
+        const float tankAP1delay = 672.0f * sc * p.delayScale;
+        const float tankDL1delay = 4453.0f * sc * p.delayScale;
+        const float tankAP2delay = 1800.0f * sc * p.delayScale;
+        const float tankDL2delay = 3720.0f * sc * p.delayScale;
 
-        float tankAP3delay = 908.0f * sc * p.delayScale;
-        float tankDL3delay = 4217.0f * sc * p.delayScale;
-        float tankAP4delay = 2656.0f * sc * p.delayScale;
-        float tankDL4delay = 3163.0f * sc * p.delayScale;
+        const float tankAP3delay = 908.0f * sc * p.delayScale;
+        const float tankDL3delay = 4217.0f * sc * p.delayScale;
+        const float tankAP4delay = 2656.0f * sc * p.delayScale;
+        const float tankDL4delay = 3163.0f * sc * p.delayScale;
 
-        float modDepth = 12.0f * p.modDepthScale * static_cast<float>(sampleRateScale);
+        const float modDepth = 12.0f * p.modDepthScale * static_cast<float>(sampleRateScale);
 
         for (int i = 0; i < numSamples; ++i)
         {
-            float mono = (inputL[i] + inputR[i]) * 0.5f;
+            const float mono = (inputL[i] + inputR[i]) * 0.5f;
 
             // Predelay
             predelayLine.push(mono);
-            float predelayed = predelayLine.read(predelaySamples);
+            const float predelayed = predelayLine.read(predelaySamples);
 
             // Input diffusion
             float diffused = inputAP[0].process(predelayed, inAP1, p.inputDiffusion1);
@@ -284,35 +285,35 @@ public:
             diffused = inputAP[3].process(diffused, inAP4, p.inputDiffusion2);
 
             // Read tank feedback from previous iteration
-            float tankFeedL = tankDelay[1].read(tankDL2delay) * decay;
-            float tankFeedR = tankDelay[3].read(tankDL4delay) * decay;
+            const float tankFeedL = tankDelay[1].read(tankDL2delay) * decay;
+            const float tankFeedR = tankDelay[3].read(tankDL4delay) * decay;
 
             // --- Left tank path ---
-            float lMod = lfo_[0].process() * modDepth;
-            float rMod = lfo_[1].process() * modDepth;
+            const float lMod = lfo_[0].process() * modDepth;
+            const float rMod = lfo_[1].process() * modDepth;
 
-            float leftIn = diffused + tankFeedR;
-            float leftAP1 = tankAP[0].process(leftIn, tankAP1delay + lMod, -p.decayDiffusion1);
+            const float leftIn = diffused + tankFeedR;
+            const float leftAP1 = tankAP[0].process(leftIn, tankAP1delay + lMod, -p.decayDiffusion1);
             tankDelay[0].push(leftAP1);
-            float leftDL1 = tankDelay[0].read(tankDL1delay);
-            float leftDamped = dampingFilter[0].process(leftDL1);
-            float leftAP2 = tankAP[1].process(leftDamped * decay, tankAP2delay, p.decayDiffusion2);
+            const float leftDL1 = tankDelay[0].read(tankDL1delay);
+            const float leftDamped = dampingFilter[0].process(leftDL1);
+            const float leftAP2 = tankAP[1].process(leftDamped * decay, tankAP2delay, p.decayDiffusion2);
             tankDelay[1].push(leftAP2);
 
             // --- Right tank path ---
-            float lMod2 = lfo_[2].process() * modDepth;
-            float rMod2 = lfo_[3].process() * modDepth;
+            const float lMod2 = lfo_[2].process() * modDepth;
+            const float rMod2 = lfo_[3].process() * modDepth;
 
-            float rightIn = diffused + tankFeedL;
-            float rightAP1 = tankAP[2].process(rightIn, tankAP3delay + rMod, -p.decayDiffusion1);
+            const float rightIn = diffused + tankFeedL;
+            const float rightAP1 = tankAP[2].process(rightIn, tankAP3delay + rMod, -p.decayDiffusion1);
             tankDelay[2].push(rightAP1);
-            float rightDL1 = tankDelay[2].read(tankDL3delay);
-            float rightDamped = dampingFilter[1].process(rightDL1);
-            float rightAP2 = tankAP[3].process(rightDamped * decay, tankAP4delay + lMod2 + rMod2, p.decayDiffusion2);
+            const float rightDL1 = tankDelay[2].read(tankDL3delay);
+            const float rightDamped = dampingFilter[1].process(rightDL1);
+            const float rightAP2 = tankAP[3].process(rightDamped * decay, tankAP4delay + lMod2 + rMod2, p.decayDiffusion2);
             tankDelay[3].push(rightAP2);
 
             // --- Output taps (Dattorro multi-tap) ---
-            float sc2 = sc * p.delayScale;
+            const float sc2 = sc * p.delayScale;
             float outL = tankDelay[2].read(266.0f * sc2)
                        + tankDelay[2].read(2974.0f * sc2)
                        - tankAP[3].process(tankDelay[3].read(1913.0f * sc2), 1.0f, 0.0f)
@@ -333,7 +334,7 @@ public:
             outR *= 0.2f;
 
             // Stereo width
-            float mid = (outL + outR) * 0.5f;
+            const float mid = (outL + outR) * 0.5f;
             float side = (outL - outR) * 0.5f;
             side *= width;
             outputL[i] = mid + side;

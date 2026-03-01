@@ -30,14 +30,14 @@ static void setupKnob(juce::Slider& slider, juce::Label& label, const juce::Stri
 }
 
 IvanSoundEditor::IvanSoundEditor(IvanSoundProcessor& p)
-    : AudioProcessorEditor(&p), processor(p)
+    : AudioProcessorEditor(&p), pluginProcessor(p)
 {
-    setupKnob(mixSlider, mixLabel, "MIX", processor.apvts, "mix", mixAttach, this);
-    setupKnob(decaySlider, decayLabel, "DECAY", processor.apvts, "decay", decayAttach, this);
-    setupKnob(sizeSlider, sizeLabel, "SIZE", processor.apvts, "size", sizeAttach, this);
-    setupKnob(dampingSlider, dampingLabel, "DAMPING", processor.apvts, "damping", dampingAttach, this);
-    setupKnob(predelaySlider, predelayLabel, "PRE-DELAY", processor.apvts, "predelay", predelayAttach, this);
-    setupKnob(widthSlider, widthLabel, "WIDTH", processor.apvts, "width", widthAttach, this);
+    setupKnob(mixSlider, mixLabel, "MIX", pluginProcessor.apvts, "mix", mixAttach, this);
+    setupKnob(decaySlider, decayLabel, "DECAY", pluginProcessor.apvts, "decay", decayAttach, this);
+    setupKnob(sizeSlider, sizeLabel, "SIZE", pluginProcessor.apvts, "size", sizeAttach, this);
+    setupKnob(dampingSlider, dampingLabel, "DAMPING", pluginProcessor.apvts, "damping", dampingAttach, this);
+    setupKnob(predelaySlider, predelayLabel, "PRE-DELAY", pluginProcessor.apvts, "predelay", predelayAttach, this);
+    setupKnob(widthSlider, widthLabel, "WIDTH", pluginProcessor.apvts, "width", widthAttach, this);
 
     // Mode dropdown
     modeBox.addItemList(juce::StringArray("Clean", "Bright", "Dark", "Lush", "Dense"), 1);
@@ -53,12 +53,12 @@ IvanSoundEditor::IvanSoundEditor(IvanSoundProcessor& p)
     modeLabel.setFont(juce::FontOptions(13.0f));
     addAndMakeVisible(modeLabel);
 
-    modeAttach = std::make_unique<ComboBoxAttachment>(processor.apvts, "mode", modeBox);
+    modeAttach = std::make_unique<ComboBoxAttachment>(pluginProcessor.apvts, "mode", modeBox);
 
     setSize(520, 400);
 }
 
-IvanSoundEditor::~IvanSoundEditor() {}
+IvanSoundEditor::~IvanSoundEditor() = default;
 
 void IvanSoundEditor::paint(juce::Graphics& g)
 {

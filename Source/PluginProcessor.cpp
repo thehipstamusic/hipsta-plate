@@ -9,7 +9,7 @@ IvanSoundProcessor::IvanSoundProcessor()
 {
 }
 
-IvanSoundProcessor::~IvanSoundProcessor() {}
+IvanSoundProcessor::~IvanSoundProcessor() = default;
 
 juce::AudioProcessorValueTreeState::ParameterLayout IvanSoundProcessor::createParameterLayout()
 {
@@ -78,25 +78,25 @@ bool IvanSoundProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
 
 void IvanSoundProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
-    juce::ScopedNoDenormals noDenormals;
+    const juce::ScopedNoDenormals noDenormals;
 
-    auto mixPct     = apvts.getRawParameterValue("mix")->load() / 100.0f;
-    auto decayVal   = apvts.getRawParameterValue("decay")->load();
-    auto sizeVal    = apvts.getRawParameterValue("size")->load();
-    auto dampingVal = apvts.getRawParameterValue("damping")->load();
-    auto predelayMs = apvts.getRawParameterValue("predelay")->load();
-    auto widthVal   = apvts.getRawParameterValue("width")->load();
-    auto modeVal    = static_cast<int>(apvts.getRawParameterValue("mode")->load());
+    const auto mixPct     = apvts.getRawParameterValue("mix")->load() / 100.0f;
+    const auto decayVal   = apvts.getRawParameterValue("decay")->load();
+    const auto sizeVal    = apvts.getRawParameterValue("size")->load();
+    const auto dampingVal = apvts.getRawParameterValue("damping")->load();
+    const auto predelayMs = apvts.getRawParameterValue("predelay")->load();
+    const auto widthVal   = apvts.getRawParameterValue("width")->load();
+    const auto modeVal    = static_cast<int>(apvts.getRawParameterValue("mode")->load());
 
     reverb.setParameters(decayVal, sizeVal, dampingVal, predelayMs, widthVal,
                          static_cast<DSP::PlateMode>(modeVal));
 
-    int numSamples = buffer.getNumSamples();
-    int numChannels = buffer.getNumChannels();
+    const int numSamples = buffer.getNumSamples();
+    const int numChannels = buffer.getNumChannels();
 
     // Ensure stereo
-    auto* inL = buffer.getReadPointer(0);
-    auto* inR = numChannels > 1 ? buffer.getReadPointer(1) : buffer.getReadPointer(0);
+    const auto* inL = buffer.getReadPointer(0);
+    const auto* inR = numChannels > 1 ? buffer.getReadPointer(1) : buffer.getReadPointer(0);
 
     // Temp buffers for wet signal
     std::vector<float> wetL(static_cast<size_t>(numSamples));
@@ -107,20 +107,20 @@ void IvanSoundProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
     // Mix dry/wet
     auto* outL = buffer.getWritePointer(0);
     for (int i = 0; i < numSamples; ++i)
-        outL[i] = inL[i] * (1.0f - mixPct) + wetL[static_cast<size_t>(i)] * mixPct;
+        outL[i] = (inL[i] * (1.0f - mixPct)) + (wetL[static_cast<size_t>(i)] * mixPct);
 
     if (numChannels > 1)
     {
         auto* outR = buffer.getWritePointer(1);
         for (int i = 0; i < numSamples; ++i)
-            outR[i] = inR[i] * (1.0f - mixPct) + wetR[static_cast<size_t>(i)] * mixPct;
+            outR[i] = (inR[i] * (1.0f - mixPct)) + (wetR[static_cast<size_t>(i)] * mixPct);
     }
 }
 
 void IvanSoundProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
     auto state = apvts.copyState();
-    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    const std::unique_ptr<juce::XmlElement> xml(state.createXml());
     copyXmlToBinary(*xml, destData);
 }
 

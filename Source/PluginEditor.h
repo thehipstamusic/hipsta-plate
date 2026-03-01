@@ -12,7 +12,7 @@ public:
     void resized() override;
 
 private:
-    IvanSoundProcessor& processor;
+    IvanSoundProcessor& pluginProcessor;
 
     // Knobs
     juce::Slider mixSlider, decaySlider, sizeSlider;
