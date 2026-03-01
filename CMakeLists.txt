@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(IvanSound VERSION 0.1.0)
+project(HipstaPlate VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,12 +27,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JUCE)
 
-juce_add_plugin(IvanSound
-    COMPANY_NAME "IvanSound"
-    PLUGIN_MANUFACTURER_CODE Ivan
-    PLUGIN_CODE Ivs1
+juce_add_plugin(HipstaPlate
+    COMPANY_NAME "HipstaPlate"
+    PLUGIN_MANUFACTURER_CODE Hpst
+    PLUGIN_CODE Hps1
     FORMATS VST3
-    PRODUCT_NAME "IvanSound"
+    PRODUCT_NAME "HipstaPlate"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
     NEEDS_MIDI_OUTPUT FALSE
@@ -41,20 +41,20 @@ juce_add_plugin(IvanSound
     COPY_PLUGIN_AFTER_BUILD TRUE
 )
 
-target_sources(IvanSound
+target_sources(HipstaPlate
     PRIVATE
         Source/PluginProcessor.cpp
         Source/PluginEditor.cpp
 )
 
-target_compile_definitions(IvanSound
+target_compile_definitions(HipstaPlate
     PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
-target_link_libraries(IvanSound
+target_link_libraries(HipstaPlate
     PRIVATE
         juce::juce_audio_utils
     PUBLIC
@@ -65,8 +65,8 @@ target_link_libraries(IvanSound
 
 # Sign the VST3 after build (ad-hoc if no identity specified)
 set(CODESIGN_IDENTITY "-" CACHE STRING "Code signing identity (use '-' for ad-hoc)")
-add_custom_command(TARGET IvanSound_VST3 POST_BUILD
+add_custom_command(TARGET HipstaPlate_VST3 POST_BUILD
     COMMAND codesign --force --sign "${CODESIGN_IDENTITY}" --deep --strict
-            "$<TARGET_BUNDLE_DIR:IvanSound_VST3>"
-    COMMENT "Signing IvanSound.vst3 with identity: ${CODESIGN_IDENTITY}"
+            "$<TARGET_BUNDLE_DIR:HipstaPlate_VST3>"
+    COMMENT "Signing HipstaPlate.vst3 with identity: ${CODESIGN_IDENTITY}"
 )

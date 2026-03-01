@@ -2,17 +2,17 @@
 
 #include "PluginProcessor.h"
 
-class IvanSoundEditor : public juce::AudioProcessorEditor
+class HipstaPlateEditor : public juce::AudioProcessorEditor
 {
 public:
-    explicit IvanSoundEditor(IvanSoundProcessor&);
-    ~IvanSoundEditor() override;
+    explicit HipstaPlateEditor(HipstaPlateProcessor&);
+    ~HipstaPlateEditor() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
-    IvanSoundProcessor& pluginProcessor;
+    HipstaPlateProcessor& pluginProcessor;
 
     juce::Slider mixSlider, decaySlider, sizeSlider;
     juce::Slider dampingSlider, predelaySlider, widthSlider;
@@ -29,5 +29,5 @@ private:
     std::unique_ptr<SliderAttachment> dampingAttach, predelayAttach, widthAttach;
     std::unique_ptr<ComboBoxAttachment> modeAttach;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(IvanSoundEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HipstaPlateEditor)
 };

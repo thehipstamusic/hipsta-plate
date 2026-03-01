@@ -30,7 +30,7 @@ static void setupKnob(juce::Slider& slider, juce::Label& label, const juce::Stri
     attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, paramId, slider);
 }
 
-IvanSoundEditor::IvanSoundEditor(IvanSoundProcessor& p)
+HipstaPlateEditor::HipstaPlateEditor(HipstaPlateProcessor& p)
     : AudioProcessorEditor(&p), pluginProcessor(p)
 {
     setupKnob(decaySlider,    decayLabel,    "DECAY",     pluginProcessor.apvts, "decay",    decayAttach,    this);
@@ -59,9 +59,9 @@ IvanSoundEditor::IvanSoundEditor(IvanSoundProcessor& p)
     setResizable(false, false);
 }
 
-IvanSoundEditor::~IvanSoundEditor() = default;
+HipstaPlateEditor::~HipstaPlateEditor() = default;
 
-void IvanSoundEditor::paint(juce::Graphics& g)
+void HipstaPlateEditor::paint(juce::Graphics& g)
 {
     g.fillAll(kBackground);
 
@@ -72,7 +72,7 @@ void IvanSoundEditor::paint(juce::Graphics& g)
     // Title
     g.setColour(kAccent);
     g.setFont(juce::FontOptions(22.0f));
-    g.drawFittedText("IVAN SOUND", getLocalBounds().removeFromTop(38), juce::Justification::centred, 1);
+    g.drawFittedText("HIPSTA PLATE", getLocalBounds().removeFromTop(38), juce::Justification::centred, 1);
 
     // Subtitle
     g.setColour(kAccentDim);
@@ -84,7 +84,7 @@ void IvanSoundEditor::paint(juce::Graphics& g)
     g.fillRect(0, 62, getWidth(), 1);
 }
 
-void IvanSoundEditor::resized()
+void HipstaPlateEditor::resized()
 {
     auto area = getLocalBounds();
     area.removeFromTop(66);
@@ -129,9 +129,9 @@ void IvanSoundEditor::resized()
     }
 }
 
-juce::AudioProcessorEditor* IvanSoundProcessor::createEditor()
+juce::AudioProcessorEditor* HipstaPlateProcessor::createEditor()
 {
-    return new IvanSoundEditor(*this);
+    return new HipstaPlateEditor(*this);
 }
 
-bool IvanSoundProcessor::hasEditor() const { return true; }
+bool HipstaPlateProcessor::hasEditor() const { return true; }

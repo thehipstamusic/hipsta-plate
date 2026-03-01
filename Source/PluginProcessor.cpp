@@ -1,7 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-IvanSoundProcessor::IvanSoundProcessor()
+HipstaPlateProcessor::HipstaPlateProcessor()
     : AudioProcessor(BusesProperties()
                          .withInput("Input", juce::AudioChannelSet::stereo(), true)
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
@@ -9,9 +9,9 @@ IvanSoundProcessor::IvanSoundProcessor()
 {
 }
 
-IvanSoundProcessor::~IvanSoundProcessor() = default;
+HipstaPlateProcessor::~HipstaPlateProcessor() = default;
 
-juce::AudioProcessorValueTreeState::ParameterLayout IvanSoundProcessor::createParameterLayout()
+juce::AudioProcessorValueTreeState::ParameterLayout HipstaPlateProcessor::createParameterLayout()
 {
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
@@ -46,25 +46,25 @@ juce::AudioProcessorValueTreeState::ParameterLayout IvanSoundProcessor::createPa
     return { params.begin(), params.end() };
 }
 
-const juce::String IvanSoundProcessor::getName() const { return JucePlugin_Name; }
-bool IvanSoundProcessor::acceptsMidi() const { return false; }
-bool IvanSoundProcessor::producesMidi() const { return false; }
-bool IvanSoundProcessor::isMidiEffect() const { return false; }
-double IvanSoundProcessor::getTailLengthSeconds() const { return 5.0; }
-int IvanSoundProcessor::getNumPrograms() { return 1; }
-int IvanSoundProcessor::getCurrentProgram() { return 0; }
-void IvanSoundProcessor::setCurrentProgram(int) {}
-const juce::String IvanSoundProcessor::getProgramName(int) { return {}; }
-void IvanSoundProcessor::changeProgramName(int, const juce::String&) {}
+const juce::String HipstaPlateProcessor::getName() const { return JucePlugin_Name; }
+bool HipstaPlateProcessor::acceptsMidi() const { return false; }
+bool HipstaPlateProcessor::producesMidi() const { return false; }
+bool HipstaPlateProcessor::isMidiEffect() const { return false; }
+double HipstaPlateProcessor::getTailLengthSeconds() const { return 5.0; }
+int HipstaPlateProcessor::getNumPrograms() { return 1; }
+int HipstaPlateProcessor::getCurrentProgram() { return 0; }
+void HipstaPlateProcessor::setCurrentProgram(int) {}
+const juce::String HipstaPlateProcessor::getProgramName(int) { return {}; }
+void HipstaPlateProcessor::changeProgramName(int, const juce::String&) {}
 
-void IvanSoundProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void HipstaPlateProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     reverb.prepare(sampleRate, samplesPerBlock);
 }
 
-void IvanSoundProcessor::releaseResources() {}
+void HipstaPlateProcessor::releaseResources() {}
 
-bool IvanSoundProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+bool HipstaPlateProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
@@ -75,7 +75,7 @@ bool IvanSoundProcessor::isBusesLayoutSupported(const BusesLayout& layouts) cons
     return true;
 }
 
-void IvanSoundProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+void HipstaPlateProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
     const juce::ScopedNoDenormals noDenormals;
 
@@ -96,14 +96,14 @@ void IvanSoundProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Mi
                    mixPct);
 }
 
-void IvanSoundProcessor::getStateInformation(juce::MemoryBlock& destData)
+void HipstaPlateProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
     auto state = apvts.copyState();
     const std::unique_ptr<juce::XmlElement> xml(state.createXml());
     copyXmlToBinary(*xml, destData);
 }
 
-void IvanSoundProcessor::setStateInformation(const void* data, int sizeInBytes)
+void HipstaPlateProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     std::unique_ptr<juce::XmlElement> xml(getXmlFromBinary(data, sizeInBytes));
     if (xml != nullptr && xml->hasTagName(apvts.state.getType()))
@@ -112,5 +112,5 @@ void IvanSoundProcessor::setStateInformation(const void* data, int sizeInBytes)
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new IvanSoundProcessor();
+    return new HipstaPlateProcessor();
 }

@@ -1,4 +1,4 @@
-# IvanSound Plate Reverb — User Manual
+# Hipsta Plate Reverb — User Manual
 
 ## Table of Contents
 
@@ -18,8 +18,8 @@
 
 ### From Release (Pre-built)
 
-1. Download `IvanSound-macOS.zip` from the [Releases page](https://github.com/Salobaka/ivan-reverb/releases).
-2. Unzip the archive. You will find `IvanSound.vst3`.
+1. Download `HipstaPlate-macOS.zip` from the [Releases page](https://github.com/Salobaka/hipsta-plate/releases).
+2. Unzip the archive. You will find `HipstaPlate.vst3`.
 3. Copy it to your VST3 plugin folder:
    ```
    ~/Library/Audio/Plug-Ins/VST3/
@@ -35,14 +35,14 @@ See [Building from Source](#building-from-source). Locally built plugins skip al
 
 ## macOS Security (Unsigned Plugin)
 
-IvanSound is not code-signed or notarized with Apple. macOS Gatekeeper will block the plugin by default. You must manually approve it before Ableton can load it.
+HipstaPlate is not code-signed or notarized with Apple. macOS Gatekeeper will block the plugin by default. You must manually approve it before Ableton can load it.
 
 ### Step 1 — Remove the quarantine flag
 
 Open Terminal (`Applications → Utilities → Terminal`) and run:
 
 ```bash
-xattr -rd com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/IvanSound.vst3
+xattr -rd com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/HipstaPlate.vst3
 ```
 
 This removes the quarantine attribute that macOS adds to all downloaded files.
@@ -54,7 +54,7 @@ If Ableton shows an error or the plugin doesn't appear after rescanning:
 1. Open **System Settings**.
 2. Go to **Privacy & Security**.
 3. Scroll down. You will see:
-   > "IvanSound" was blocked from use because it is not from an identified developer.
+   > "HipstaPlate" was blocked from use because it is not from an identified developer.
 4. Click **Allow Anyway**.
 5. Restart Ableton.
 
@@ -75,13 +75,13 @@ Plugins built locally on your own machine are automatically trusted by macOS. Th
 3. Make sure **Use VST3 plug-in system folder** is **ON**.
 4. Click **Rescan** to refresh the plugin list.
 5. In the browser sidebar on the left, navigate to:
-   **Plug-ins → VST3 → IvanSound**
-6. Drag **IvanSound** onto any **audio track** or **return track**.
+   **Plug-ins → VST3 → HipstaPlate**
+6. Drag **HipstaPlate** onto any **audio track** or **return track**.
 
 ### Recommended: Use on a Return Track
 
 1. In Ableton's mixer, click on a **Return Track** (A, B, C, etc.).
-2. Drop IvanSound onto the return track.
+2. Drop HipstaPlate onto the return track.
 3. Set the plugin's **Mix to 100%** (fully wet).
 4. On any audio/instrument track, turn up the **Send** knob for that return to blend in reverb.
 
@@ -220,7 +220,7 @@ Try automating **Decay** to swell the tail at the end of a phrase, or **Mix** to
 
 1. Verify the file is at:
    ```
-   ~/Library/Audio/Plug-Ins/VST3/IvanSound.vst3
+   ~/Library/Audio/Plug-Ins/VST3/HipstaPlate.vst3
    ```
 2. Remove the quarantine flag (see [macOS Security](#macos-security-unsigned-plugin)).
 3. In Ableton: **Settings → Plug-ins → Rescan**.
@@ -256,8 +256,8 @@ Follow all steps in [macOS Security](#macos-security-unsigned-plugin).
 ### Steps
 
 ```bash
-git clone https://github.com/Salobaka/ivan-reverb.git
-cd ivan-reverb
+git clone https://github.com/Salobaka/hipsta-plate.git
+cd hipsta-plate
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
@@ -280,7 +280,7 @@ Locally built plugins are automatically trusted by macOS.
 ## Uninstallation
 
 ```bash
-rm -rf ~/Library/Audio/Plug-Ins/VST3/IvanSound.vst3
+rm -rf ~/Library/Audio/Plug-Ins/VST3/HipstaPlate.vst3
 ```
 
 Rescan plugins in Ableton after removing.

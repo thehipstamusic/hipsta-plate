@@ -3,11 +3,11 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "DSP/DattorroPlate.h"
 
-class IvanSoundProcessor : public juce::AudioProcessor
+class HipstaPlateProcessor : public juce::AudioProcessor
 {
 public:
-    IvanSoundProcessor();
-    ~IvanSoundProcessor() override;
+    HipstaPlateProcessor();
+    ~HipstaPlateProcessor() override;
 
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
@@ -39,5 +39,5 @@ private:
 
     DSP::DattorroPlate reverb;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(IvanSoundProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HipstaPlateProcessor)
 };
