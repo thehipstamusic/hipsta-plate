@@ -18,7 +18,7 @@
 
 ### From Release (Pre-built)
 
-1. Download `HipstaPlate-macOS.zip` from the [Releases page](https://github.com/Salobaka/hipsta-plate/releases).
+1. Download `HipstaPlate-macOS.zip` from the [Releases page](https://github.com/thehipstamusic/hipsta-plate/releases) — or grab the [latest release directly](https://github.com/thehipstamusic/hipsta-plate/releases/latest/download/HipstaPlate-macOS.zip).
 2. Unzip the archive. You will find `HipstaPlate.vst3`.
 3. Copy it to your VST3 plugin folder:
    ```
